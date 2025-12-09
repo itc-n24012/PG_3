@@ -11,7 +11,7 @@ for guesses_taken in range(1, 7):
     elif guess > secret_number:
         print('あなたの推定値は大きいです。')
     else:
-        break # 当たり!
+        break
 
 if guess == secret_number:
     print('当たり!' + str(guesses_taken) + '回で当たりました!')
