@@ -67,5 +67,6 @@ while True:
         print(f"ボーナス100点加算！最終スコア: {score}点")
         break
 
+
 print(f"\n--- ゲーム終了 ---")
 print(f"最終スコア: {score}点")
