@@ -1,110 +1,86 @@
 import random
-import sys
-from collections import defaultdict
 
+te = ["グー","チョキ","パー"]
 
-def get_move_display(move):
-    if move == 'r':
-        return 'グー (ROCK)'
-    elif move == 'p':
-        return 'パー (PAPER)'
-    elif move == 's':
-        return 'チョキ (SCISSORS)'
-    return ''
+#勝ち/負け/あいこのカウント
+wins = 0    #人間のスコア
+loses = 0   #コンピュータのスコア
+ties = 0
 
+#ゲーム開始
+for turn in range(1,11): #ゲームのループは10回
+    print(f"第{turn}回：")
+    print(f"現在{wins}勝 {loses}敗 あいこ{ties}回です")
 
-def run_janken_game():
-    player_score = 0
-    computer_score = 0
+    while True: #入力のループ
+        try:
+            player_move = int(input("グー：0、チョキ：1、パー：2、ゲーム終了：3 ->"))
+            if player_move == 3:
+                wins -= 1
+                break  #ゲーム終了なので入力のループから抜ける
+            if player_move >= 0 and player_move <= 2:
+                break   #勝ち負けの判定に行く
+        except ValueError:
+            print("0から3までの数字を入力してくださいね")
+    #入力のループここまで
 
-    print('--- じゃんけん 10回勝負 ---')
-    print('r: グー, p: パー, s: チョキ, q: ゲーム終了')
+    if player_move == 3:
+        break #ゲームのループからも抜ける
 
-    for round_num in range(1, 11):
-        print(f'\n--- 第 {round_num} 回戦 ---')
+    #コンピュータは人間の手をあえて見ないようにして出す手を後出ししている
+    computer_move = random.randint(0, 2)
+    print(f"コンピュータ：{te[computer_move]}　あなた：{te[player_move]} ", end="")
 
-        rand_num = random.randint(1, 3)
-        if rand_num == 1:
-            computer_move = 'r'
-        elif rand_num == 2:
-            computer_move = 'p'
-        else:
-            computer_move = 's'
+    #勝敗の判定　　　(参考リンク： https://qiita.com/mpyw/items/3ffaac0f1b4a7713c869 )
+    judge=(player_move - computer_move + 3) % 3
+    if judge == 0:  #あいこ
+        print("…あいこでした")
+        ties += 1
+    elif judge == 1:    #負け
+        print("…あなたの負けです💦")
+        loses += 1
+    else:    #勝ち
+        print("…あなたの勝ちです！")
+        wins += 1
 
-        while True:
-            player_move = input('あなたの手を入力してください: ').lower()
+    """"    前のバージョンの勝敗判定
+    if computer_move == player_move:    #まずはあいこ
+        print("あいこです")
+        ties += 1
+    else:   #勝ちか負けのパターン
+        if computer_move == 0:    #コンピュータがグーの場合
+            print("コンピュータ：グー　", end="")
+            if player_move == 1:  #人間はチョキ
+                print("あなた：チョキ …あなたの負けです")
+                loses += 1
+            else:  #人間はパー
+                print("あなた：パー …あなたの勝ちです")
+                wins += 1
+        elif computer_move == 1:    #コンピュータがチョキの場合
+            print("コンピュータ：チョキ　", end="")
+            if player_move == 0:  #人間はグー
+                print("あなた：グー …あなたの勝ちです")
+                wins += 1
+            else:   #人間はパー
+                print("あなた：パー …あなたの負けです")
+                loses += 1
+        else:   #コンピュータがパーの場合
+            print("コンピュータ：パー　", end="")
+            if player_move == 0:  #人間はグー
+                print("あなた：グー …あなたの負けです")
+                loses += 1
+            else:   #人間はチョキ
+                print("あなた：チョキ …あなたの勝ちです")
+                wins += 1
+    """
+    #ゲームのループここまで
 
-            if player_move == 'q':
-                player_score -= 1
-                print('\nゲーム終了を選択しました。あなたのスコアから1点マイナスします。')
-                break
-
-            if player_move in ('r', 'p', 's'):
-                break
-
-            print('エラー: r, p, s, または q を入力してください。')
-
-        if player_move == 'q':
-            break
-
-        print(f'あなた: {get_move_display(player_move)}')
-        print(f'コンピュータ: {get_move_display(computer_move)}')
-
-        if player_move == computer_move:
-            result = 'あいこ'
-            print('判定: あいこです！')
-
-        elif (player_move == 'r' and computer_move == 's') or \
-                (player_move == 'p' and computer_move == 'r') or \
-                (player_move == 's' and computer_move == 'p'):
-            result = '勝ち'
-            player_score += 1
-            print('判定: あなたの勝ちです！ (+1 ポイント)')
-
-        else:
-            result = '負け'
-            computer_score += 1
-            print('判定: あなたの負けです。')
-
-    print('\n--- 最終結果 ---')
-    print(f'あなたの最終ポイント: {player_score}点')
-    print(f'コンピュータの最終ポイント: {computer_score}点')
-
-    if player_score > computer_score:
-        print('🏆 総合優勝はあなたです！おめでとうございます！')
-    elif computer_score > player_score:
-        print('残念、総合優勝はコンピュータでした。')
-    else:
-        print(' 最終ポイントは同点です。')
-
-
-def run_ichi_hachi_game():
-    ichi_hachi_score = defaultdict(int)
-
-    print('--- 18（イチハチ）ゲーム ---')
-    print('ルール: 連続でじゃんけんに勝つと、勝った回数分の点数が得られます。')
-    print('負けるかあいこになると、それまで貯めた連続勝ちの記録はリセットされます。')
-    print('r: グー, p: パー, s: チョキ, q: ゲーム終了')
-
-    player_name = 'あなた'
-    computer_name = 'コンピュータ'
-
-    player_streak = 0
-    computer_streak = 0
-
-    while True:
-        print(
-            f'\n--- スコア: {player_name}: {ichi_hachi_score[player_name]}点, {computer_name}: {ichi_hachi_score[computer_name]}点 ---')
-
-        while True:
-            player_move = input(f'{player_name}の手を入力してください (qで終了): ').lower()
-            if player_move == 'q':
-                print('\nゲームを終了します。')
-                print(
-                    f'最終スコア: {player_name}: {ichi_hachi_score[player_name]}点, {computer_name}: {ichi_hachi_score[computer_name]}点')
-                sys.exit()
-            if player_move in ('r', 'p', 's'):
-                break
-            print('エラー: r, p, s, または q を入力してください。')
-
-        rand_num = random.randint
+#結果発表
+print("*** 結果発表 ***")
+print(f"あなた：{wins}点 コンピュータ：{loses}点")
+if wins > loses:
+    print("🎊おめでとう！あなたの勝ちです！🎉")
+elif wins < loses:
+    print("(ﾉД`)残念！あなたの負けです！💀")
+else:
+    print("同点引き分けです。もう一度プレイしましょう！")
