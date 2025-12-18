@@ -1,27 +1,26 @@
 import random
 
-cards = list(range(1, 53))
+suit = ['♠','♥','♦','♣']
+cards = []
+for i in range(1,53):
+    cards.append(i)
 
 print(cards)  # シャッフル前
 random.shuffle(cards)
 print(cards)  # シャッフル後
 
+
 pick = int(input("何枚目のカードを引きますか(1-52) >>"))
-card = cards[pick - 1]  # インデックスは0から
+#(引いたカードはcards[pick-1]になります)
 
-# スート判定
-suits = ["スペード", "ハート", "ダイヤ", "クラブ"]
-suit = suits[(card - 1) // 13]
+#スートを特定する
+s = cards[pick-1]//13
+print(s)
 
-# ナンバー判定
-number = (card - 1) % 13 + 1
-if number == 1:
-    number = "A"
-elif number == 11:
-    number = "J"
-elif number == 12:
-    number = "Q"
-elif number == 13:
-    number = "K"
+#ナンバーを特定する
+n = cards[pick-1]%13
+if n == 0:
+    s-=1
+number=13
 
-print(f"あなたが引いたカードは {suit} の {number} です")
+print(f"あなたが引いたのは{suit[s]}の{number}です")
